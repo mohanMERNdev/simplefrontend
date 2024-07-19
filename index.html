@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Frontend</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        #items {
+            margin-top: 20px;
+        }
+        #items div {
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Simple Frontend</h1>
+    <input type="text" id="itemInput" placeholder="Enter new item">
+    <button onclick="addItem()">Add Item</button>
+    <div id="items"></div>
+
+    <script>
+        const backendUrl = 'https://simplebackend-e7m5.onrender.com';
+
+        async function fetchItems() {
+            const response = await fetch(backendUrl);
+            const items = await response.json();
+            const itemsContainer = document.getElementById('items');
+            itemsContainer.innerHTML = '';
+            items.forEach(item => {
+                const div = document.createElement('div');
+                div.textContent = item;
+                itemsContainer.appendChild(div);
+            });
+        }
+
+        async function addItem() {
+            const itemInput = document.getElementById('itemInput');
+            const newItem = itemInput.value;
+            const response = await fetch(backendUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newItem)
+            });
+            if (response.ok) {
+                itemInput.value = '';
+                fetchItems();
+            }
+        }
+
+        // Fetch items on page load
+        fetchItems();
+    </script>
+</body>
+</html>
